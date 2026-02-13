@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>For Yamin ❤️</title>
+  <style>
+    body {
+      margin:0;
+      height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      text-align:center;
+      font-family: 'Comic Sans MS', cursive;
+      background: linear-gradient(to bottom right, #a31d5e, #e25181);
+      overflow:hidden;
+      color:black;
+    }
+
+    #container h1{
+      font-size: 45px;
+      margin-bottom:20px;
+    }
+
+    #container p{
+      font-size: 22px;
+      margin-bottom:25px;
+    }
+
+    button{
+      padding:15px 30px;
+      font-size:20px;
+      margin:15px;
+      border-radius:30px;
+      border:none;
+      cursor:pointer;
+      transition:0.3s;
+    }
+
+    .yes{background-color:#ff3366;color:white;}
+    .yes:hover{background-color:#ff1a4d;}
+    .no{background-color:white;color:#ff3366;}
+    .no:hover{background-color:#ffcccc;}
+
+    /* Floating hearts animation */
+    .heart{
+      position:absolute;
+      color:#ff3366;
+      animation: floatUp 6s linear infinite;
+      font-size:24px;
+      user-select:none;
+      pointer-events:none;
+    }
+
+    @keyframes floatUp{
+      0%{bottom:-10px; opacity:1;}
+      100%{bottom:100%; opacity:0;}
+    }
+  </style>
+</head>
+<body>
+
+<div id="container">
+  <h1>Yamin, will you be my Valentine? ❤️</h1>
+  <button class="yes" onclick="yesClicked()">Yes 💖</button>
+  <button class="no" onclick="noClicked()">No 😢</button>
+</div>
+
+<!-- Background music -->
+<audio id="bgMusic" autoplay loop>
+  <source src="MellowMint(Audio).mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<script>
+  // 1️⃣ Firebase Config - replace with yours
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+    databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT_ID.appspot.com",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
+  };
+
+  // 2️⃣ Initialize Firebase
+  const app = firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+
+  // 3️⃣ Counters
+  let yesCount = 0;
+  let noCount = 0;
+
+  // 4️⃣ Floating hearts
+  function createHeart(){
+    const heart = document.createElement('div');
+    heart.className = 'heart';
+    heart.innerHTML = '💖';
+    heart.style.left = Math.random()*100 + 'vw';
+    heart.style.fontSize = Math.random()*20+20+'px';
+    heart.style.animationDuration = (Math.random()*3+3)+'s';
+    document.body.appendChild(heart);
+    setTimeout(()=>heart.remove(),6000);
+  }
+  setInterval(createHeart, 400);
+
+  // 5️⃣ Button functions
+  function yesClicked(){
+    yesCount++;
+    sendData('yes');
+    document.getElementById('container').innerHTML = `
+      <h1>She said YES!! 💕✨</h1>
+      <p>You just made my world brighter, Yamin 🥺💖</p>
+      <p>I promise to treat you with love and make beautiful memories 💌</p>
+    <img src="https://media.giphy.com/media/MDJ9IbxxvDUQM/giphy.gif">
+      <p style="font-size:16px;">Yes clicks: ${yesCount}, No clicks: ${noCount}</p>
+    `;
+  }
+
+  function noClicked(){
+    noCount++;
+    sendData('no');
+
+    if(noCount==1){
+      document.getElementById('container').innerHTML = `
+        <h1>Wait... really? 🥺</h1>
+        <p>Maybe your finger slipped? 😭</p>
+        <img src="https://media.giphy.com/media/OPU6wzx8JrHna/giphy.gif">
+        <br>
+        <button class="yes" onclick="yesClicked()">Okay fine YES 💖</button>
+        <button class="no" onclick="noClicked()">Still No 😅</button>
+        <p style="font-size:16px;">Yes clicks: ${yesCount}, No clicks: ${noCount}</p>
+      `;
+    }
+    else if(noCount==2){
+      document.getElementById('container').innerHTML = `
+        <h1>Error 404 💔</h1>
+        <p>My heart.exe has stopped working 😭</p>
+        <img src="https://media.giphy.com/media/l378giAZgxPw3eO52/giphy.gif">
+        <br>
+        <button class="yes" onclick="yesClicked()">Okay okay YES 💕</button>
+        <button class="no" onclick="noClicked()">I’m serious 😶</button>
+        <p style="font-size:16px;">Yes clicks: ${yesCount}, No clicks: ${noCount}</p>
+      `;
+    }
+    else{
+      document.getElementById('container').innerHTML = `
+        <h1>It’s okay ❤️</h1>
+        <p>I respect your decision, Yamin.</p>
+        <p>I just wanted to express my feelings honestly 😊</p>
+        <img src="https://media.giphy.com/media/3o6Zt481isNVuQI1l6/giphy.gif">
+        <p style="font-size:16px;">Yes clicks: ${yesCount}, No clicks: ${noCount}</p>
+      `;
+    }
+  }
+
+  // 6️⃣ Send data to Firebase secretly
+  function sendData(choice){
+    const timestamp = Date.now();
+    db.ref('valentine/' + timestamp).set({
+      choice: choice,
+      yesCount: yesCount,
+      noCount: noCount
+    });
+  }
+
+</script>
+</body>
+</html>
